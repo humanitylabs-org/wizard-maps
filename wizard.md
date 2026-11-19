@@ -36,6 +36,8 @@ provides:
 system: false
 uses: []
 needs: []
+permissions:
+- geolocation
 health: /healthz
 switches:
   contract: wizard.app-switches/1

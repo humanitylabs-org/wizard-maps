@@ -17,7 +17,7 @@ import maps  # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 DATA = maps.DATA
 APP_ID = 'maps'
-VERSION = '0.1.1'
+VERSION = '0.1.2'
 STATIC_TYPES = {'.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
                 '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml',
                 '.png': 'image/png', '.json': 'application/json', '.pbf': 'application/x-protobuf'}

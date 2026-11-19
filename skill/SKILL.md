@@ -1,7 +1,7 @@
 ---
 name: maps
 description: Use when the owner asks where a place is, how to get somewhere, or about his saved places or map regions.
-version: 0.1.1
+version: 0.1.2
 author: Hermes Agent (Oscar, Miguel's agent)
 license: GPL-3.0-only
 platforms: [linux, macos]

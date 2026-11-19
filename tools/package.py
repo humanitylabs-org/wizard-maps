@@ -60,6 +60,7 @@ def main():
     search = engine(JRE, ['bash', '/app/engines/photon.sh'], '4608m', 3,
                     {'PHOTON_IMPORT_HEAP': '3g', 'PHOTON_SERVE_HEAP': '1g', 'PHOTON_IMPORT_THREADS': '2',
                      'JAVA_TOOL_OPTIONS': '-Djava.io.tmpdir=/tmp'})
+    search['tmpfs'] = ['/tmp:exec']  # OpenSearch's JNA loads a native helper from the temp dir
     # The image's own entrypoint only knows its build-and-serve script: run our supervisor instead (an empty
     # entrypoint does not survive the App Manager's compose rewrite, so name the interpreter).
     routing = engine(VALHALLA, ['/app/engines/engine.py', 'valhalla'], '6g', 4,

@@ -54,7 +54,8 @@ services:
     cap_drop: *id001
     security_opt: *id002
     read_only: true
-    tmpfs: *id003
+    tmpfs:
+    - /tmp:exec
     init: true
     restart: unless-stopped
     command:

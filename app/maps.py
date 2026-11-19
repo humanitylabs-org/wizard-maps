@@ -40,6 +40,7 @@ REFRESH_DAYS = int(os.environ.get('MAPS_REFRESH_DAYS', '30'))
 TRANSIT_REFRESH_DAYS = int(os.environ.get('MAPS_TRANSIT_REFRESH_DAYS', '7'))
 PACK_MAX_BYTES = 1_500_000_000
 MAX_FEEDS = 6
+MIN_FREE_BYTES = int(os.environ.get('MAPS_MIN_FREE_GB', '8')) << 30
 
 ARCH = {'x86_64': 'amd64', 'amd64': 'amd64', 'aarch64': 'arm64', 'arm64': 'arm64'}.get(platform.machine().lower(), 'amd64')
 TOOLS = {  # pinned upstream releases, verified by SHA-256 before use
@@ -757,6 +758,10 @@ class Worker:
         def step(name, pct, message=''):
             _set_region(rid, state='building', step=name, pct=pct, message=message)
 
+        free = shutil.disk_usage(DATA).free
+        if free < MIN_FREE_BYTES:
+            raise RuntimeError(f'Not enough free disk on the server ({free >> 30} GB free, needs {MIN_FREE_BYTES >> 30} GB '
+                               'to build a region). Free some space, then refresh this region.')
         step('map', 2, 'Cutting the detailed map')
         tiles = DATA / f'tiles/{rid}.pmtiles'
         seed = DATA / f'seed/{rid}.pmtiles'

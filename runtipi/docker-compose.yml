@@ -83,8 +83,9 @@ services:
     tmpfs: *id003
     init: true
     restart: unless-stopped
-    command:
+    entrypoint:
     - python3
+    command:
     - /app/engines/engine.py
     - valhalla
     working_dir: /data
@@ -109,8 +110,9 @@ services:
     tmpfs: *id003
     init: true
     restart: unless-stopped
-    command:
+    entrypoint:
     - python3
+    command:
     - /app/engines/engine.py
     - motis
     working_dir: /data

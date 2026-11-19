@@ -88,7 +88,7 @@ maplibregl.addProtocol('wzg', async params => {
   catch (e) { return { data: new Uint8Array() }; }
 });
 maplibregl.addProtocol('wzs', async params => {
-  const name = params.url.slice(6);
+  const name = params.url.slice(6).replace(/\//g, '');  // 'wzs://light/@2x.json' -> 'light@2x.json'
   const data = await cachedFetch('api/assets/sprites/v4/' + name);
   if (name.endsWith('.json')) return { data: JSON.parse(new TextDecoder().decode(data)) };
   return { data };
@@ -115,7 +115,7 @@ function buildStyle() {
   };
 }
 const view = store.get('view', { center: [100.5, 13.75], zoom: 2 });
-const map = new maplibregl.Map({
+const map = window.__map = new maplibregl.Map({
   container: 'map', style: buildStyle(), center: view.center, zoom: view.zoom, attributionControl: { compact: true },
   maxPitch: 60, dragRotate: true, cooperativeGestures: false,
 });

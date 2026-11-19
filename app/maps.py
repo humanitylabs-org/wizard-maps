@@ -1135,8 +1135,10 @@ def transit_route(a, b, depart_at, a_name='', b_name=''):
     if not r or r['id'] not in st:
         raise Problem(503, 'No transit timetables on your server for this area yet.')
     when = depart_at or time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())
-    if not isinstance(when, str) or not re.fullmatch(r'\d{4}-\d\d-\d\dT\d\d:\d\d(:\d\d)?(Z|[+-]\d\d:?\d\d)?', when):
+    m = isinstance(when, str) and re.fullmatch(r'(\d{4}-\d\d-\d\dT\d\d:\d\d(?::\d\d)?)(?:\.\d{1,9})?(Z|[+-]\d\d:?\d\d)?', when)
+    if not m:
         raise Problem(400, 'depart_at must be an ISO time like 2026-11-19T09:00:00+07:00.')
+    when = m.group(1) + (m.group(2) or '')      # browsers send milliseconds (toISOString); MOTIS wants whole seconds
     q = urllib.parse.urlencode({'fromPlace': f'{a[0]},{a[1]}', 'toPlace': f'{b[0]},{b[1]}', 'time': when,
                                 'numItineraries': 3})
     try:

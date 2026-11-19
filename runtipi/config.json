@@ -10,8 +10,8 @@
     "utilities"
   ],
   "description": "World map out of the box; add countries or regions and your server builds detailed maps, search (Photon), directions by car, motorbike, bike and walking (Valhalla) and transit (MOTIS + official GTFS) in the background. Saved places and lists, sharing, GPS follow-me and offline areas on the phone. All open source and open data (OpenStreetMap ODbL, Protomaps).",
-  "tipi_version": 1,
-  "version": "0.1.0",
+  "tipi_version": 2,
+  "version": "0.1.1",
   "source": "https://github.com/humanitylabs-org/wizard-maps",
   "exposable": false,
   "supported_architectures": [
@@ -19,7 +19,7 @@
     "arm64"
   ],
   "created_at": 1795080648037,
-  "updated_at": 1795080648037,
+  "updated_at": 1795084002652,
   "dynamic_config": true,
   "min_tipi_version": "4.8.0",
   "uid": 1000,

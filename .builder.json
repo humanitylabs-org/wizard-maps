@@ -1,0 +1,8 @@
+{
+  "request": "Maps for anywhere in the world on your own box: search, directions, saved places, offline areas on your phone",
+  "template": "hello-wizard",
+  "kind": "hello",
+  "rules": 2,
+  "state": "local_draft",
+  "name": "Maps"
+}

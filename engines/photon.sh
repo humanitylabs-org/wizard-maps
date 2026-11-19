@@ -67,7 +67,7 @@ while true; do
         rm -f "$INPUT"
         status serving "" "Search index ready"
       else
-        DONE=$GEN; echo "$DONE" > "$D/done"; rm -rf "$OUT"
+        DONE=$GEN; echo "$DONE" > "$D/done"; rm -rf "$OUT" "$INPUT"
         status failed import "$(tail -c 300 "$D/import.log" | tr '\n"' "  ")"
       fi
     fi

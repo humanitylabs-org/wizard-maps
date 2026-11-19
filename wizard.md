@@ -4,7 +4,7 @@ id: maps
 name: Maps
 type: service
 category: app
-version: 0.1.0
+version: 0.1.1
 summary: Maps for anywhere in the world on your own server, with search, directions, transit, saved places and offline areas on your phone.
 license: GPL-3.0-only
 source: https://github.com/humanitylabs-org/wizard-maps

@@ -771,7 +771,7 @@ function openCredits() {
 if (!window.WizardApp || WizardApp.version !== 1) {
   say('Wizard system functions are unavailable. Open Maps through Wizard.', 'error');
 } else {
-  WizardApp.ready({ name: 'maps', version: '0.1.1' });
+  WizardApp.ready({ name: 'maps', version: '0.1.2' });
   WizardApp.back.register({
     canGoBack: () => !el('results').hidden || !el('end-results').hidden || !!ui.panel,
     back: () => {

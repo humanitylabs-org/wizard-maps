@@ -4,12 +4,12 @@ id: maps
 name: Maps
 type: service
 category: app
-version: 0.2.0
-summary: Reference app with a daily habit list, documented HTTP API, MCP and editable
-  view source.
+version: 0.1.0
+summary: Maps for anywhere in the world on your own server, with search, directions, transit, saved places and offline areas on your phone.
 license: GPL-3.0-only
-source: https://github.com/owner/maps
+source: https://github.com/humanitylabs-org/wizard-maps
 runtime:
+  package: source
   kind: runtipi
   config: runtipi/config.json
   compose: runtipi/docker-compose.yml
@@ -30,8 +30,9 @@ view:
     build: python3 app/build_view.py
     dist: web
 provides:
-- diagnostics
-- habit-tracking
+- maps
+- directions
+- place-search
 system: false
 uses: []
 needs: []
@@ -41,10 +42,18 @@ switches:
   path: /api/switches
 ---
 
-# Hello Wizard
+# Maps
 
-The builder base: an API and MCP over the same stdlib service layer, with a vanilla view that calls only the API. Add a habit, mark today done, undo it; SQLite persists in app-data. Original time/echo MCP jobs are preserved.
+A private Google Maps on your own server. Out of the box you get a world overview map. Add the countries or regions
+you care about (Regions); your server then builds, in the background and one at a time, the detailed map, place search
+(Photon), directions by car, motorbike, bike and on foot (Valhalla) and public transport from official timetables
+(MOTIS, feeds found through the Mobility Database). Progress is shown in the app and to your agent, and every region
+refreshes itself monthly (transit weekly).
 
-PR24 API/view-source declarations are proposed. The candidate checks them in explicit proposal mode while preserving approved checker compatibility. app/Dockerfile builds from the repository root; the Runtipi compose inlines the exact source for portable installation without publishing an image. Re-run template packaging after source edits.
+On the phone: search as you type, long-press to drop a pin, save places to lists, share a location, directions with
+alternatives, your GPS position with follow-me, and "Download for offline" to keep the area you're looking at on the
+phone (with your saved places) for use without a connection.
 
-Appearance decisions: [the canonical Wizard app style guide](https://github.com/humanitylabs-org/wizard-os/blob/main/style/APP-DESIGN-RULES.md). Use the shared kit; do not invent a per-app palette or UI font. New apps are strict in the builder; CI ratchets added/changed lines.
+Server cost, measured for Thailand: about 4 GB of disk and 1.5 GB of RAM while serving; a build takes 15-25 minutes on a
+busy box. Engines run with memory and CPU caps and low priority. Map data © OpenStreetMap contributors (ODbL); basemap by
+Protomaps; transit timetables under each feed's own licence (shown in the app's About sheet).

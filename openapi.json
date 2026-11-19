@@ -1,36 +1,223 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Hello Wizard habits and diagnostics",
-    "version": "0.2.0"
+    "title": "Maps",
+    "version": "0.1.0"
   },
   "paths": {
-    "/api/habits": {
+    "/api/state": {
       "get": {
-        "summary": "List habits and server ISO day",
+        "summary": "Regions, world map, engines, lists and saved places in one read",
         "responses": {
           "200": {
-            "description": "{day, habits:[{id,name,done}]}"
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "summary": "Search places as you type (Photon) plus matching saved places",
+        "responses": {
+          "200": {
+            "description": "{query,results,saved}"
           },
-          "400": {
-            "description": "Invalid day"
+          "503": {
+            "description": "Search not ready"
           }
         },
         "parameters": [
           {
-            "name": "day",
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "description": "Owner's local date; defaults to the box's UTC date. Must be within a day of UTC."
+              "type": "number"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/api/reverse": {
+      "get": {
+        "summary": "Nearest address or place at a point",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/route": {
+      "post": {
+        "summary": "Directions: car, motorbike, bike, walk (Valhalla) or transit (MOTIS)",
+        "responses": {
+          "200": {
+            "description": "{mode,from,to,routes,note}"
+          },
+          "404": {
+            "description": "No route"
+          },
+          "503": {
+            "description": "Not ready"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  },
+                  "mode": {
+                    "type": "string"
+                  },
+                  "depart_at": {
+                    "type": "string"
+                  },
+                  "lang": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/places": {
+      "get": {
+        "summary": "Saved places",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "list",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ]
       },
       "post": {
-        "summary": "Add a habit",
+        "summary": "Save a place (idempotent by id)",
+        "responses": {
+          "201": {
+            "description": "{place}"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "lat": {
+                    "type": "number"
+                  },
+                  "lon": {
+                    "type": "number"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "list": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/places/{id}": {
+      "post": {
+        "summary": "Change name, note or list of a saved place",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -39,49 +226,47 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 60
+                    "type": "string"
                   },
-                  "day": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Owner's local date (YYYY-MM-DD)."
+                  "note": {
+                    "type": "string"
+                  },
+                  "list": {
+                    "type": "string"
                   }
-                },
-                "required": [
-                  "name"
-                ]
+                }
               }
             }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Updated list"
-          },
-          "400": {
-            "description": "Invalid name"
-          },
-          "409": {
-            "description": "Duplicate name"
           }
         }
       }
     },
-    "/api/habits/{id}/today": {
+    "/api/places/{id}/delete": {
       "post": {
-        "summary": "Idempotently mark or undo today",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
+        "summary": "Delete a saved place",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
-        ],
+        }
+      }
+    },
+    "/api/lists": {
+      "get": {
+        "summary": "Lists with counts",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a list",
+        "responses": {
+          "201": {
+            "description": "{list}"
+          }
+        },
         "requestBody": {
           "required": true,
           "content": {
@@ -89,88 +274,191 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "done": {
-                    "type": "boolean"
-                  },
-                  "day": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "Owner's local date (YYYY-MM-DD)."
-                  }
-                },
-                "required": [
-                  "done"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Updated list"
-          },
-          "400": {
-            "description": "Invalid boolean"
-          },
-          "404": {
-            "description": "No such habit"
-          }
-        }
-      }
-    },
-    "/api/time": {
-      "get": {
-        "summary": "Current UTC time",
-        "responses": {
-          "200": {
-            "description": "{utc: ISO UTC timestamp}"
-          }
-        }
-      }
-    },
-    "/api/echo": {
-      "post": {
-        "summary": "Echo text",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "text": {
+                  "name": {
                     "type": "string"
                   }
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "/api/regions": {
+      "get": {
+        "summary": "Regions on the server and build progress",
         "responses": {
           "200": {
-            "description": "{text}"
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "summary": "Add a region (background build)",
+        "responses": {
+          "202": {
+            "description": "{region,state}"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/regions/catalog": {
+      "get": {
+        "summary": "Find downloadable regions (Geofabrik) by name or point",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "lat",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/api/regions/{id}/refresh": {
+      "post": {
+        "summary": "Rebuild a region now",
+        "responses": {
+          "202": {
+            "description": "queued"
+          }
+        }
+      }
+    },
+    "/api/regions/{id}/remove": {
+      "post": {
+        "summary": "Remove a region and its data",
+        "responses": {
+          "202": {
+            "description": "removed"
+          }
+        }
+      }
+    },
+    "/api/packs": {
+      "get": {
+        "summary": "Offline map packs being cut for the phone",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cut an offline map pack for a bbox",
+        "responses": {
+          "202": {
+            "description": "{pack}"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "bbox": {
+                    "type": "string"
+                  },
+                  "maxzoom": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/packs/estimate": {
+      "get": {
+        "summary": "Size estimate of an offline pack",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "parameters": [
+          {
+            "name": "bbox",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "maxzoom",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ]
+      }
+    },
+    "/api/tiles/{name}.pmtiles": {
+      "get": {
+        "summary": "PMTiles archive (world or a region) with HTTP Range",
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
     },
     "/healthz": {
       "get": {
-        "summary": "Health and app version",
+        "summary": "Health",
         "responses": {
           "200": {
-            "description": "{ok,app,version}"
-          }
-        }
-      }
-    },
-    "/mcp": {
-      "post": {
-        "summary": "Stateless streamable HTTP JSON-RPC MCP; initialize, tools/list, tools/call, ping",
-        "responses": {
-          "200": {
-            "description": "JSON-RPC response"
-          },
-          "202": {
-            "description": "Notification acknowledged"
+            "description": "OK"
           }
         }
       }

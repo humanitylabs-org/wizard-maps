@@ -1,5 +1,5 @@
 // Maps view: MapLibre over the owner's own server, with phone GPS and downloaded areas kept on the phone (OPFS).
-import * as maplibregl from './vendor/maplibre-gl.mjs';
+import * as maplibregl from './dist/maplibre-gl.mjs';
 
 const el = id => document.getElementById(id);
 const pm = window.pmtiles, bm = window.basemaps;
@@ -124,7 +124,7 @@ map.on('moveend', () => { const c = map.getCenter(); store.set('view', { center:
 map.on('dragstart', () => setFollow(false));
 
 function overlays() {
-  const accent = css('--wz-accent') || '#4c8dff', muted = css('--wz-text-muted') || '#888', danger = css('--wz-danger') || '#e55';
+  const accent = css('--wz-accent') || 'royalblue', muted = css('--wz-text-muted') || 'gray', danger = css('--wz-danger') || 'crimson';
   if (!map.getSource('route')) map.addSource('route', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
   if (!map.getSource('saved')) map.addSource('saved', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
   if (!map.getSource('acc')) map.addSource('acc', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
@@ -136,9 +136,9 @@ function overlays() {
     layout: { 'line-cap': 'round' }, paint: { 'line-color': accent, 'line-width': 4, 'line-dasharray': [0.1, 2] } });
   add({ id: 'route', type: 'line', source: 'route', filter: ['all', ['!=', ['get', 'alt'], true], ['!=', ['get', 'walk'], true]],
     layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['coalesce', ['get', 'color'], accent], 'line-width': 7 } });
-  add({ id: 'saved', type: 'circle', source: 'saved', paint: { 'circle-radius': 6, 'circle-color': accent, 'circle-stroke-width': 2, 'circle-stroke-color': css('--wz-text') || '#fff' } });
+  add({ id: 'saved', type: 'circle', source: 'saved', paint: { 'circle-radius': 6, 'circle-color': accent, 'circle-stroke-width': 2, 'circle-stroke-color': css('--wz-text') || 'white' } });
   add({ id: 'saved-label', type: 'symbol', source: 'saved', minzoom: 12, layout: { 'text-field': ['get', 'name'], 'text-font': ['Noto Sans Medium'], 'text-size': 12, 'text-offset': [0, 1.2], 'text-anchor': 'top' },
-    paint: { 'text-color': accent, 'text-halo-color': css('--wz-base') || '#000', 'text-halo-width': 1.5 } });
+    paint: { 'text-color': accent, 'text-halo-color': css('--wz-base') || 'black', 'text-halo-width': 1.5 } });
   void danger;
   drawSaved(); drawRoute();
 }

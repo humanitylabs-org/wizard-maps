@@ -1,41 +1,16 @@
 {
   "round_trip": [
-    {
-      "do": "POST /api/habits",
-      "name": "create",
-      "body": {
-        "name": "Verify {{run}}"
-      },
-      "status": 201,
-      "save": {
-        "hid": "habits.-1.id"
-      }
-    },
-    {
-      "do": "GET /api/habits",
-      "name": "list",
-      "expect": {
-        "habits.-1.name": "Verify {{run}}",
-        "habits.-1.done": false
-      }
-    },
-    {
-      "do": "POST /api/habits/{{hid}}/today",
-      "name": "update",
-      "body": {
-        "done": true
-      }
-    },
-    {
-      "restart": true
-    },
-    {
-      "do": "GET /api/habits",
-      "name": "read back after restart",
-      "expect": {
-        "habits.-1.name": "Verify {{run}}",
-        "habits.-1.done": true
-      }
-    }
+    {"do": "GET /api/lists", "name": "default lists", "expect": {"lists.0.id": "saved"}},
+    {"do": "POST /api/places", "name": "create",
+     "body": {"id": "{{uuid:p}}", "name": "Verify {{run}}", "lat": 13.7465, "lon": 100.5348, "address": "Siam, Bangkok", "list": "Want to go"},
+     "status": 201, "save": {"pid": "place.id"}, "expect": {"place.list": "Want to go"}},
+    {"do": "POST /api/places", "name": "idempotent replay",
+     "body": {"id": "{{uuid:p}}", "name": "Verify {{run}}", "lat": 13.7465, "lon": 100.5348, "address": "Siam, Bangkok", "list": "Want to go"},
+     "status": 201, "expect": {"place.id": "{{pid}}"}},
+    {"do": "GET /api/places?list=want-to-go", "name": "list", "expect": {"places.-1.id": "{{pid}}", "places.-1.name": "Verify {{run}}"}},
+    {"do": "POST /api/places/{{pid}}", "name": "update", "body": {"note": "Meet at exit 2"}, "expect": {"place.note": "Meet at exit 2"}},
+    {"restart": true},
+    {"do": "GET /api/places?list=want-to-go", "name": "read back after restart",
+     "expect": {"places.-1.id": "{{pid}}", "places.-1.note": "Meet at exit 2", "places.-1.lat": 13.7465}}
   ]
 }

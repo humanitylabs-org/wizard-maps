@@ -268,14 +268,16 @@ class Handler(BaseHTTPRequestHandler):
             return self.send(400, {'error': 'Invalid request.'})
         except Exception as e:  # noqa: BLE001
             return self.send(502, {'error': f'Maps could not do that: {e}'})
-        # The view: files in web/ and web/vendor/ by an allowlisted type. No other subpaths, no dotfiles.
+        # The view: files in web/ and web/dist/ (unmodified upstream builds) by an allowlisted type. No other subpaths,
+        # no dotfiles. Public script/style/font files answer any origin (a sandboxed Wizard window sends Origin: null).
         name = 'index.html' if path == '/' else path[1:]
         parts = name.split('/')
         kind = STATIC_TYPES.get(Path(name).suffix)
-        if kind and (len(parts) == 1 or (len(parts) == 2 and parts[0] == 'vendor')) and not any(
+        if kind and (len(parts) == 1 or (len(parts) == 2 and parts[0] == 'dist')) and not any(
                 p.startswith('.') or not p for p in parts) and (ROOT / 'web' / name).is_file():
+            public = {'Access-Control-Allow-Origin': '*'} if name != 'index.html' else None
             return self.send(200, (ROOT / 'web' / name).read_bytes(), kind,
-                             cache='max-age=86400' if parts[0] == 'vendor' else 'no-cache')
+                             cache='max-age=86400' if parts[0] == 'dist' else 'no-cache', extra=public)
         if path == '/openapi.json':
             return self.send(200, (ROOT / 'openapi.json').read_bytes())
         self.send(405 if path == '/mcp' else 404, {'error': 'Use POST /mcp.' if path == '/mcp' else 'Not found.'})
